@@ -136,8 +136,7 @@ describe("Search Tests", () => {
                   `/s/horizon/common/results/filters/PreviousFiltersUpdateAction`,
                   {}
                 ).as(`${key}-alias-wait-close}`);
-                cy.wait(`@${key}-alias-wait-close}`);
-                // cy.wait(10000); // here we wait for page to reload
+                cy.wait(`@${key}-alias-wait-close}`); // here we wait for page to reload
 
                 search_result.getCheapest().click(); // sometimes when page reloads, it goes back to "Best" tab, so we have to click on "Cheapest" tab
                 cy.get(`[data-resultid=${uniqueId}]`)
