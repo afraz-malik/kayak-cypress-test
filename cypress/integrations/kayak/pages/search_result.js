@@ -6,7 +6,7 @@ class searchResult {
     // cy.wait(10000);
     return cy.get("div.Fxw9 [data-resultid]").first();
   }
-  getCurrency() {
+  openCurrencyModal() {
     cy.get('[aria-label="Navigation menu"]').click({ force: true });
     cy.get(".pRB0 > :nth-child(1) > :nth-child(13) > div:nth-child(2)").click({
       force: true,
@@ -27,6 +27,11 @@ class searchResult {
   }
   saveTCurrency() {
     cy.get(":nth-child(2) > :nth-child(3) > .KmfS").click({ force: true });
+    return cy.get('[aria-label="close"] >.Py0r-button-container');
+  }
+  selectSpecificCurrency(currencyName) {
+    cy.get("#currency-picker-search").type(currencyName);
+    cy.get(".KmfS").click({ force: true });
     return cy.get('[aria-label="close"] >.Py0r-button-container');
   }
 }
