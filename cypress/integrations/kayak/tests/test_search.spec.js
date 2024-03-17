@@ -49,9 +49,7 @@ describe("Search Tests", () => {
         Departure,
         Arrival
       );
-      //  main_page.goToSearchInput($origin.Scenario_2.Origin_Input,$origin.Scenario_2.Origin_Selection,
-      //   $origin.Scenario_2.Destination_Input, $origin.Scenario_2.Destination_Selection,
-      //   $origin.Scenario_2.Departure)
+
       /**
        * Here we are making assertion with date input and the date coming from api and displayed on DOM
        */
@@ -90,87 +88,38 @@ describe("Search Tests", () => {
         });
     });
 
+    // Click on the cheapest tab
     search_result.getCheapest().click();
 
-    /*
-       
-    //// get best fare
+    let secondCurrencyName, storeThirdCurrency;
 
+    cy.wait(10000); // If we remove this, we get $remoteJquery not defined at .then
 
- 
-  let Best = '', bTime= '' , bTime1 = '' 
-    cy.server()
-    cy.route({
-        method: 'GET',
-        url: '**?sort=bestflight_a**',
-      }).as('searchDataB')
-      cy.wait(10000)
-      main_page.getBestPrice()
-      .then ((number)=> {
-        Best = parseFloat( number
-          .text()
-          .split('$')
-          .pop())
-      })
-
-      main_page.getBestTime()
-      .then ((time)=> {
-       bTime1 = time.text()
-       bTime = time_fare.timeFareCalc(bTime1)
-      })
-      
-
-      cy.wait('@searchDataB').then((xhr) => {
-        main_page.getBestPrice()
-        .should('contain', Best)
-
-        cy.log(Best)
-        cy.log(bTime)
-      })
-      cy.log(Best)
-
-*/
-    /// get cheapest fare
-
-    // cy.wait(10000);
-    // main_page.getCheapPrice().click({force: true})
-
-    var Cheap = "",
-      cTime = "",
-      cTime1 = "";
-    let storeSecondCurrency, storeThirdCurrency;
-
-    // cy.request({
-    //   method: "GET",
-    //   url: "**/horizon/flights/results/FlightSearchPollAction**",
-    // }).as("searchDataC");
-
-    // This will return data of first card.
-    cy.wait(10000);
+    // Get the first cheap price card from results
     search_result.getCheapPrice().then(($firstChild) => {
+      // unique id of selected card
       var uniqueId = $firstChild[0].getAttribute("data-resultid");
-      var price1, price2, price3;
-      // Use $firstChild as needed
-      // console.log($firstChild[0]);
-      cy.wait(10000);
+
+      var USDPrice, price2, price3;
+
+      // Store the currency of USD price of unique card in variable USDPrice
       cy.get(`[data-resultid=${uniqueId}]`)
         .find(".f8F1-price-text")
         .eq(0)
         .then((PriceVal) => {
-          price1 = PriceVal.text();
+          USDPrice = PriceVal.text();
 
-          cy.log("in then first card price is ", price1, uniqueId);
-
-          // select second currency and store its value
+          // select second currency name and store its value
           search_result.getCurrency();
           cy.get(":nth-child(2) > :nth-child(2) > .KmfS").then((text) => {
-            storeSecondCurrency = text.text();
+            secondCurrencyName = text.text();
           });
 
           search_result.saveSCurrency().click({ force: true });
-          cy.wait(10000);
+          cy.wait(10000); // here we wait for page to reload
 
-          //cy.get(`[data-resultid=${uniqueId}] > .yuAt > .nrc6-wrapper > .nrc6-inner > .nrc6-price-section > .Oihj > .Oihj-bottom-booking > .M_JD > .M_JD-large-display > :nth-child(1) > .oVHK-fclink > .f8F1 > .f8F1-above > .f8F1-price-text-container > .f8F1-price-text`)
+          search_result.getCheapest().click(); // sometimes when page reloads, it goes back to "Best" tab, so we have to click on "Cheapest" tab
+
           cy.get(`[data-resultid=${uniqueId}]`)
             .find(".f8F1-price-text")
             .eq(0)
@@ -182,15 +131,14 @@ describe("Search Tests", () => {
 
           // select third currency and store its value
           search_result.getCurrency();
-
           cy.get(":nth-child(2) > :nth-child(3) > .KmfS").then((text) => {
             storeThirdCurrency = text.text();
           });
 
           search_result.saveTCurrency().click({ force: true });
-          cy.wait(10000);
+          cy.wait(10000); // here we wait for page to reload
+          search_result.getCheapest().click(); // sometimes when page reloads, it goes back to "Best" tab, so we have to click on "Cheapest" tab
 
-          //cy.get(`[data-resultid=${uniqueId}] > .yuAt > .nrc6-wrapper > .nrc6-inner > .nrc6-price-section > .Oihj > .Oihj-bottom-booking > .M_JD > .M_JD-large-display > :nth-child(1) > .oVHK-fclink > .f8F1 > .f8F1-above > .f8F1-price-text-container > .f8F1-price-text`)
           cy.get(`[data-resultid=${uniqueId}]`)
             .find(".f8F1-price-text")
             .eq(0)
@@ -206,12 +154,11 @@ describe("Search Tests", () => {
               // Assertions on the response
               expect(response.status).to.equal(200);
               APIResponse = response;
-              //cy.log('Response:', JSON.stringify(response.body));
               cy.log(
-                price1,
+                USDPrice,
                 price2,
                 price3,
-                storeSecondCurrency,
+                secondCurrencyName,
                 storeThirdCurrency
               );
               // Perform assertion: Compare payload USD rate with response
@@ -219,8 +166,8 @@ describe("Search Tests", () => {
               let EURrate = JSON.stringify(response.body.rates.EUR);
               let CADrate = JSON.stringify(response.body.rates.CAD);
               cy.log("Rates from API are: ", USDrate, EURrate, CADrate);
-              cy.log(price1, price2, price3);
-              var USDprice = rate_Conversion.extractPriceValue(price1);
+              cy.log(USDPrice, price2, price3);
+              var USDprice = rate_Conversion.extractPriceValue(USDPrice);
               var EURprice = rate_Conversion.extractPriceValue(price2);
               var CADprice = rate_Conversion.extractPriceValue(price3);
               cy.log("DOM Prices are: ", USDprice, EURprice, CADprice);
@@ -250,172 +197,7 @@ describe("Search Tests", () => {
               expect(CADprice).to.equal(CADconvertedPrice);
             }
           );
-
-          Object.keys(currency).forEach((key) => {
-            // var currencyCode = key;
-            //  var currencyString = currency[key];
-            // cy.clearCookies();
-            //search_result.getCurrency(currencyString)
-            /* cy.wait(10000);
-          cy.get(`[data-resultid=${uniqueId}]`)
-            .find(".f8F1-price-text")
-            .eq(0)
-            .then((el) => {
-              cy.log(
-                "Final Results:",
-                "Original USD Price " + price1,
-                "Converted " + key + " " + el.text()
-              );
-            });*/
-          });
         });
-
-      // console.log(uniqueId, price1, "hello afraz");
-      // cy.log("out of then",price1, price2, price3, uniqueId)
     });
-
-    // cy.log(Cheap,  "hello world  123"); // not getting Cheap value here
-
-    /* main_page.getCheapTime()
-    .then ((time)=> {
-    
-             cTime1 =time.text()
-    cTime = time_fare.timeFareCalc(cTime1)
-    
-           })*/
-
-    // cy.wait("@searchDataC").then((xhr) => {
-    //   main_page.getCheapPrice().should("contain", Cheap);
-    //   cy.log(Cheap);
-    //   //cy.log(cTime)
-    // });
-
-    /*        /// get quickest fare
-
-         cy.wait(10000)
-         main_page.getQuickPrice().click({force: true})
-         
-         let Quick = '', qTime = '', qTime1 = ''
-        
-         
-         cy.server()
-         cy.route({
-             method: 'GET',
-             url: '**?sort=duration_a**',
-           }).as('searchDataQ')
-           main_page.getQuickPrice()
-           .then((number) => {
-             Quick = parseFloat( number
-               .text()
-               .split('$')
-               .pop())
-           })
-         
-           main_page.getQuickTime()
-           .then ((time)=> {
-            qTime1 = time.text()
-            qTime = time_fare.timeFareCalc(qTime1)
-               
-           })
-
-           cy.wait('@searchDataQ').then((xhr) => {
-             main_page.getQuickPrice()
-             .should('contain', Quick)
-             cy.log(Quick)
-             cy.log(qTime)
-             
-           
-         })
-    
-
-
-         main_page.getQuickPrice()
-           .then(() => {
-             if(Cheap <= Best && Cheap <= Quick){
-              cy.log('Cheap fare is less than from Best and Quick fares')
-              cy.log('Cheapest:',Cheap)
-              cy.log('Best:',Best) 
-              cy.log('Quickest:',Quick)
-              // Compares Cheap fare with Best fare
-              if(Cheap< Best){
-                expect(Cheap).to.be.lessThan(Best)
-              }
-              else{
-                if(Cheap == Best){
-                  expect(Cheap).to.be.equal(Best)
-                }
-                else{
-                  cy.log("Cheap fare is greater than Best fare")
-                }
-              }
-
-
-              //Compares Cheap fare with Quick fare
-              if(Cheap < Quick){
-                expect(Cheap).to.be.lessThan(Quick)
-              }
-              else{
-                if(Cheap == Quick){
-                  expect(Cheap).to.be.equal(Quick)
-                }
-                else{
-                  cy.log("Cheap fare is greater than Quick fare")
-                }
-              }
-             
-             }
-             else{
-               cy.log('I am mad')
-             }
-           
-            })
-
-           main_page.getBestPrice()
-           .then(() => {
-             
-             if(qTime <= cTime && qTime <= bTime){
-              cy.log('Quick time is less than or equal to Cheap and Best times')
-              cy.log('Cheapest Time:',cTime)
-              cy.log('Best Time:',bTime) 
-              cy.log('Quickest Time:',qTime)
-
-              // Compares qTime with cTime
-              if (qTime< cTime){
-                expect(qTime).to.be.lessThan(cTime)
-              }
-              else {
-                if(qTime==cTime){
-                  expect(qTime).to.be.equal(cTime)
-              
-                }
-                else{
-                  cy.log("Quick time is not less than Cheap time")
-                }
-              }
-                 // Compares qTime with bTime
-              if(qTime<bTime){
-                expect(qTime).to.be.lessThan(bTime)
-              }
-              else{
-                if(qTime == bTime){
-                  expect(qTime).to.be.equal(bTime)
-                }
-                else
-                {
-                  cy.log("Quick time is not less than Best time")
-                }
-              }
-            
-             }
-             else{
-               cy.log('I am mad')
-             }
-
-           })
-*/
   });
-  /* it('lets the user compare cheap flight rates', () => {
-     
-     
-    })*/
 });
