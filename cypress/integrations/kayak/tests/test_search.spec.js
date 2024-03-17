@@ -1,9 +1,11 @@
+// adding this line for intellisense
+/// <reference types="Cypress" />
+
 import main_page from "../pages/main_page";
 import search_result from "../pages/search_result";
 import date_Conversion from "../helpers/date_Conversion";
 import rate_Conversion from "../helpers/rate_Conversion";
 const currency = {
-  USD: "United States dollar",
   EUR: "Euro",
   CAD: "Canadian dollar",
 };
@@ -131,7 +133,14 @@ describe("Search Tests", () => {
                 search_result
                   .selectSpecificCurrency(currency[key])
                   .click({ force: true });
-                cy.wait(10000); // here we wait for page to reload
+
+                cy.intercept(
+                  `/s/horizon/common/results/filters/PreviousFiltersUpdateAction`,
+                  {}
+                ).as(`${key}-alias-wait-close}`);
+                cy.wait(`@${key}-alias-wait-close}`);
+                // cy.wait(10000); // here we wait for page to reload
+
                 search_result.getCheapest().click(); // sometimes when page reloads, it goes back to "Best" tab, so we have to click on "Cheapest" tab
                 cy.get(`[data-resultid=${uniqueId}]`)
                   .find(".f8F1-price-text")
