@@ -1,0 +1,35 @@
+{
+  "Scenario_1": {
+    "Origin_Input": "Dubai",
+    "Origin_Selection": "Dubai, United Arab Emirates",
+    "Destination_Input": "Doha",
+    "Destination_Selection": "Doha, Qatar",
+    "Passengers": {
+      "Adults": 4,
+      "Seniors": 0,
+      "Youth": 0,
+      "Child": 0,
+      "Seat Infant": 0,
+      "Lap Infant": 0
+    },
+    "Departure": "04/08/2024",
+    "Arrival": "05/15/2024"
+  },
+
+  "Scenario_2": {
+    "Origin_Input": "Boston, MA",
+    "Origin_Selection": "BOS",
+    "Destination_Input": "Washington, All airports",
+    "Destination_Selection": "SEA",
+    "Passengers": {
+      "Adults": 4,
+      "Seniors": 0,
+      "Youth": 0,
+      "Child": 0,
+      "Seat Infant": 0,
+      "Lap Infant": 0
+    },
+    "Departure": "04/08/2020",
+    "Arrival": "04/15/2020"
+  }
+}
