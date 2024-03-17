@@ -117,7 +117,7 @@ describe("Search Tests", () => {
             .find(".f8F1-price-text")
             .eq(0)
             .then((PriceVal) => {
-              var USDPrice = PriceVal.text().replace(/\D/g, "");
+              var USDPrice = PriceVal.text().replace(/\D/g, ""); // Extracting only digits from this text and removing any non-digit characters.
 
               let USDrate = JSON.stringify(apiResponse.body.rates.USD);
               var USDconvertedPrice = rate_Conversion.rateConversion(
@@ -145,7 +145,7 @@ describe("Search Tests", () => {
                   .eq(0)
                   .then((PriceVal) => {
                     var currentSelectedPrice = PriceVal.text().replace(
-                      /\D/g,
+                      /\D/g, // Extracting only digits from this text and removing any non-digit characters.
                       ""
                     );
                     let currentSelectedPriceRate = JSON.stringify(
