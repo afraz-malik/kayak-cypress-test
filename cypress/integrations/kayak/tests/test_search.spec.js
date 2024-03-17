@@ -27,6 +27,7 @@ describe("Search Tests", () => {
       "value",
       "R3Q0UUi78WlHf$EpALjI"
     );
+    // Trying to avoid JQuery error for this website
     cy.on("window:before:load", (win) => {
       if (win.jQuery === undefined && (win.$ === undefined || win.$ === {})) {
         win.$ = Cypress.cy.$$;
