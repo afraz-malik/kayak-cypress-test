@@ -106,8 +106,6 @@ describe("Search Tests", () => {
       // unique id of selected card
       var uniqueId = $firstChild[0].getAttribute("data-resultid");
 
-      var price2, price3;
-
       // Get the currency conversion api response
       cy.request("GET", "https://open.er-api.com/v6/latest/USD").then(
         (apiResponse) => {
@@ -158,7 +156,6 @@ describe("Search Tests", () => {
                         currentSelectedPriceRate,
                         currentSelectedPrice
                       );
-                    cy.log("in then second card price is ", price2, uniqueId);
                     expect(
                       parseInt(currentSelectedConvertedPriceInUSD)
                     ).to.equal(parseInt(USDPrice));
